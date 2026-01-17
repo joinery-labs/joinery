@@ -1,0 +1,32 @@
+/* =============================================================================
+   LINKS
+   ============================================================================= */
+
+.link-base {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.link-base:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
+
+.link-base:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+.link-base i,
+.link-base svg {
+    flex-shrink: 0;
+    font-size: 14px;
+}

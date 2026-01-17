@@ -1,0 +1,195 @@
+/* =============================================================================
+   TABLES
+   ============================================================================= */
+
+.table.table-base {
+    margin-bottom: 0;
+    font-size: 12px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-md);
+    border-collapse: separate;
+    border-spacing: 0;
+
+    background-color: var(--color-bg-default);
+}
+
+.table-base ::selection {
+    background-color: var(--color-table-selection);
+    color: #ffffff;
+}
+
+.table-base thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--color-bg-subtle);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--color-fg-muted);
+    vertical-align: middle;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-border-default);
+    border-right: 1px solid var(--color-border-default);
+}
+
+.table-base thead tr:first-child th:first-child {
+    border-top-left-radius: calc(var(--radius-md) - 1px);
+}
+
+.table-base thead tr:first-child th:last-child {
+    border-top-right-radius: calc(var(--radius-md) - 1px);
+}
+
+.table-base thead th:last-child {
+    border-right: 0;
+}
+
+.table-base thead th:hover {
+    background-color: var(--color-bg-muted);
+    cursor: pointer;
+}
+
+.table-base td {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: var(--spacing-xs) var(--spacing-md);
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-border-default);
+    border-right: 1px solid var(--color-border-default);
+    color: var(--color-fg-default);
+}
+
+.table-base tr>*:last-child {
+    border-right: 0;
+}
+
+.table-base tbody tr:last-child>* {
+    border-bottom: 0;
+}
+
+.table-base tbody tr:last-child td:first-child {
+    border-bottom-left-radius: calc(var(--radius-md) - 1px);
+}
+
+.table-base tbody tr:last-child td:last-child {
+    border-bottom-right-radius: calc(var(--radius-md) - 1px);
+}
+
+.table-base tbody tr:hover td {
+    background-color: var(--color-bg-muted);
+}
+
+.table-base.no-row-hover tbody tr:hover td,
+.table-base.no-row-hover thead th:hover {
+    background-color: inherit;
+    cursor: default;
+}
+
+.table-base.table-sm thead th {
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.table-base.table-sm td {
+    padding: 2px var(--spacing-sm);
+}
+
+/* =============================================================================
+   SAVED QUERIES TABLE
+   ============================================================================= */
+
+.saved-queries-table {
+    min-width: 700px;
+}
+
+.saved-queries-table .col-query {
+    min-width: 200px;
+}
+
+.saved-queries-table .col-name {
+    min-width: 100px;
+}
+
+.saved-queries-table .col-folder {
+    min-width: 80px;
+}
+
+.saved-queries-table .col-params {
+    min-width: 180px;
+}
+
+.saved-queries-table .col-action {
+    min-width: 100px;
+    white-space: nowrap;
+}
+
+.saved-queries-table td {
+    padding: 0;
+    margin: 0;
+    vertical-align: top;
+}
+
+.saved-queries-table .cell-textarea {
+    border: none;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    padding: var(--spacing-sm);
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100px;
+    vertical-align: top;
+    background-color: transparent;
+    font-size: 11px;
+    line-height: 1.4;
+    resize: vertical;
+}
+
+.saved-queries-table .cell-textarea:focus {
+    box-shadow: none;
+    background-color: transparent;
+}
+
+.saved-queries-table .params-cell {
+    padding: var(--spacing-sm);
+}
+
+.saved-queries-table .action-cell {
+    padding: var(--spacing-sm);
+}
+
+.saved-queries-table .param-row {
+    display: grid;
+    grid-template-columns: minmax(60px, 120px) minmax(80px, 1fr);
+    gap: var(--spacing-xs);
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+.saved-queries-table .param-row:last-child {
+    margin-bottom: 0;
+}
+
+.saved-queries-table .param-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--bs-pink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+}
+
+.saved-queries-table .param-default {
+    min-width: 80px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 12px;
+}
+
+.saved-queries-table .no-params {
+    font-size: 11px;
+    color: var(--color-fg-muted);
+}

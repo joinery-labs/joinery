@@ -1,0 +1,40 @@
+/* =============================================================================
+   LOADING OVERLAY
+   Reusable overlay component for loading states across the app.
+   Usage: Add .loading-overlay-zone to a container, place .loading-overlay inside.
+   ============================================================================= */
+
+.loading-overlay-zone {
+    position: relative;
+}
+
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    background-color: var(--color-bg-overlay);
+    border-radius: var(--radius-md);
+    z-index: 1;
+}
+
+.loading-overlay.is-active {
+    display: flex;
+}
+
+.loading-overlay-spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--color-border-default);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loading-overlay-text {
+    font-size: 13px;
+    color: var(--color-fg-muted);
+}

@@ -1,0 +1,105 @@
+/* =============================================================================
+   LIGHT THEME
+   ============================================================================= */
+
+body[data-bs-theme="light"] {
+    color-scheme: light;
+
+    /* Background Colors */
+    --color-bg-canvas: #ffffff;
+    --color-bg-default: #ffffff;
+    --color-bg-subtle: #f6f8fa;
+    --color-bg-muted: #eaeef2;
+    --color-bg-emphasis: #24292f;
+    --color-bg-overlay: rgba(255, 255, 255, 0.9);
+
+    /* Foreground/Text Colors */
+    --color-fg-default: #1f2328;
+    --color-fg-muted: #656d76;
+    --color-fg-subtle: #6e7781;
+    --color-fg-on-emphasis: #ffffff;
+
+    /* Border Colors */
+    --color-border-default: #d0d7de;
+    --color-border-muted: #d8dee4;
+    --color-border-subtle: #eaeef2;
+
+    /* Shadow */
+    --shadow-sm: 0 1px 0 rgba(31, 35, 40, 0.04);
+    --shadow-md: 0 3px 6px rgba(140, 149, 159, 0.15);
+    --shadow-lg: 0 8px 24px rgba(140, 149, 159, 0.2);
+
+    /* Focus Ring */
+    --color-focus-ring: #0969da;
+
+    /* Accent Colors */
+    --color-accent: #0969da;
+    --color-accent-hover: #0860ca;
+    --color-accent-muted: #ddf4ff;
+
+    /* Semantic Colors */
+    --color-success: #1a7f37;
+    --color-success-muted: #dafbe1;
+    --color-warning: #9a6700;
+    --color-warning-muted: #fff8c5;
+    --color-danger: #cf222e;
+    --color-danger-muted: #ffebe9;
+    --color-info: #0969da;
+    --color-info-muted: #ddf4ff;
+
+    /* Table Selection */
+    --color-table-selection: #0550ae;
+}
+
+/* =============================================================================
+   DARK THEME
+   ============================================================================= */
+
+body[data-bs-theme="dark"] {
+    color-scheme: dark;
+
+    /* Background Colors */
+    --color-bg-canvas: #0d1117;
+    --color-bg-default: #161b22;
+    --color-bg-subtle: #21262d;
+    --color-bg-muted: #30363d;
+    --color-bg-emphasis: #6e7681;
+    --color-bg-overlay: rgba(22, 27, 34, 0.9);
+
+    /* Foreground/Text Colors */
+    --color-fg-default: #e6edf3;
+    --color-fg-muted: #8b949e;
+    --color-fg-subtle: #6e7681;
+    --color-fg-on-emphasis: #ffffff;
+
+    /* Border Colors */
+    --color-border-default: #30363d;
+    --color-border-muted: #21262d;
+    --color-border-subtle: #21262d;
+
+    /* Shadow */
+    --shadow-sm: 0 0 transparent;
+    --shadow-md: 0 3px 6px #010409;
+    --shadow-lg: 0 8px 24px #010409;
+
+    /* Focus Ring */
+    --color-focus-ring: #58a6ff;
+
+    /* Accent Colors */
+    --color-accent: #58a6ff;
+    --color-accent-hover: #79b8ff;
+    --color-accent-muted: #1c2c41;
+
+    /* Semantic Colors */
+    --color-success: #3fb950;
+    --color-success-muted: #1b2d22;
+    --color-warning: #d29922;
+    --color-warning-muted: #2a2517;
+    --color-danger: #f85149;
+    --color-danger-muted: #2d1b1b;
+    --color-info: #58a6ff;
+    --color-info-muted: #1c2c41;
+
+    /* Table Selection */
+    --color-table-selection: #388bfd;
+}

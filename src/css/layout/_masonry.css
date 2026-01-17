@@ -1,0 +1,17 @@
+/* =============================================================================
+   MASONRY LAYOUT
+   ============================================================================= */
+
+.masonry {
+    position: relative;
+    width: 100%;
+}
+
+.masonry-item {
+    /* Positioned dynamically by JavaScript */
+    position: absolute;
+}
+
+#content-1 {
+    padding-bottom: var(--spacing-lg);
+}

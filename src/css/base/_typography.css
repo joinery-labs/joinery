@@ -1,0 +1,47 @@
+/* =============================================================================
+   TYPOGRAPHY
+   ============================================================================= */
+
+.code-font {
+    font-family: var(--font-mono);
+}
+
+.nowrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =============================================================================
+   Labels
+   ============================================================================= */
+
+.label-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-fg-default);
+}
+
+.label-title.fontcode {
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
+.label-base {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.label-base.fontcode {
+    font-family: var(--font-mono);
+}
+
+.label-muted {
+    font-size: 14px;
+    color: var(--color-fg-subtle);
+}
+
+.label-muted.fontcode {
+    font-family: var(--font-mono);
+}

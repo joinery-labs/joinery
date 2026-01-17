@@ -1,0 +1,200 @@
+/* =============================================================================
+   QUERY RESULTS
+   ============================================================================= */
+
+.result-block {
+    background-color: var(--color-bg-default);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.result-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.result-meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 12px;
+    color: var(--color-fg-muted);
+    background-color: var(--color-bg-subtle);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+}
+
+.result-meta-item i {
+    color: var(--color-accent);
+}
+
+.result-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.result-sql {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-bg-subtle);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-muted);
+}
+
+.result-sql .btn {
+    padding: 2px 6px;
+    flex-shrink: 0;
+}
+
+.result-sql-text {
+    flex: 1;
+    color: var(--color-success);
+    word-break: break-word;
+    white-space: pre-wrap;
+    margin: 0;
+    font-size: 12px;
+    font-family: var(--font-mono);
+}
+
+.result-sql-text.is-error {
+    color: var(--color-danger);
+}
+
+/* Styles for the SQL editor within the result view */
+.result-sql-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background-color: var(--color-bg-subtle);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-accent);
+}
+
+.result-sql-edit-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.result-sql-edit-actions .btn {
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+.fs-table {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--radius-md);
+}
+
+.result-block.in-fullscreen .fs-table,
+.result-block.is-expanded .fs-table {
+    max-height: 100vh;
+}
+
+.result-block.in-fullscreen,
+.result-block.is-expanded {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background-color: var(--color-bg-canvas);
+    margin: 0 !important;
+    border-radius: 0;
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+}
+
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+/* =============================================================================
+   COLUMN FILTER/SORT MENU
+   ============================================================================= */
+
+.colmenu {
+    position: fixed;
+    min-width: 320px;
+    max-width: 400px;
+    background-color: var(--color-bg-default);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    z-index: var(--z-tooltip);
+    box-shadow: var(--shadow-lg);
+}
+
+.colmenu .head {
+    font-weight: 600;
+    font-size: 14px;
+    cursor: move;
+    user-select: none;
+    padding-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--color-fg-default);
+}
+
+.colmenu .head:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    border-radius: var(--radius-sm);
+}
+
+.colmenu .colmenu-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.colmenu .form-check-base {
+    margin-bottom: var(--spacing-sm);
+}
+
+.colmenu .d-flex.gap-2.mb-2 {
+    margin-bottom: var(--spacing-lg) !important;
+}
+
+.colmenu .alert {
+    border-radius: var(--radius-md);
+    font-size: 12px;
+}
+
+/* =============================================================================
+   TREESELECT WITHIN COLUMN MENU
+   TreeSelect fixed menus are appended to the body and require a higher z-index than the column menu.
+   ============================================================================= */
+
+.treeselect-menu.is-fixed.is-open {
+    z-index: calc(var(--z-tooltip) + 100) !important;
+}

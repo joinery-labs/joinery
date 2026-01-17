@@ -1,0 +1,134 @@
+/* =============================================================================
+   TABS
+   ============================================================================= */
+
+#tabList {
+    --tab-width: 140px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border-default);
+}
+
+@media (min-width: 576px) {
+    #tabList {
+        --tab-width: 150px;
+    }
+}
+
+@media (min-width: 768px) {
+    #tabList {
+        --tab-width: 170px;
+    }
+}
+
+@media (min-width: 992px) {
+    #tabList {
+        --tab-width: 190px;
+    }
+}
+
+@media (min-width: 1400px) {
+    #tabList {
+        --tab-width: 210px;
+    }
+}
+
+#tabList::-webkit-scrollbar {
+    height: 4px;
+}
+
+#tabList::-webkit-scrollbar-thumb {
+    background: var(--color-border-default);
+    border-radius: 4px;
+}
+
+#tabList .nav-item {
+    flex: 0 0 auto;
+}
+
+#tabList .nav-item .nav-link {
+    display: flex;
+    align-items: center;
+    width: var(--tab-width);
+    min-width: 0;
+    gap: var(--spacing-sm);
+    white-space: nowrap;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 14px;
+    font-weight: 500;
+    background-color: transparent;
+    color: var(--color-fg-muted);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+#tabList .nav-item .nav-link:hover {
+    background-color: var(--color-bg-subtle);
+    color: var(--color-fg-default);
+}
+
+#tabList .nav-item .nav-link:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: -2px;
+}
+
+#tabList .nav-item .nav-link.active {
+    background-color: var(--color-bg-subtle);
+    color: var(--color-fg-default);
+    border-color: var(--color-border-default);
+}
+
+#tabList .nav-item .tab-title {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+#tabList .nav-item .tab-close {
+    flex: 0 0 auto;
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: opacity var(--transition-fast), background-color var(--transition-fast);
+}
+
+#tabList .nav-item .tab-close:hover {
+    opacity: 1;
+    background-color: var(--color-danger-muted);
+    color: var(--color-danger);
+}
+
+#tabList .nav-item.add-tab .nav-link {
+    width: auto;
+    border: 1px dashed var(--color-border-default);
+    color: var(--color-fg-muted);
+}
+
+#tabList .nav-item.add-tab .nav-link:hover {
+    background-color: var(--color-accent-muted);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+#tabList li.nav-item[draggable="true"] {
+    user-select: none;
+}
+
+#tabList li.nav-item.dragging {
+    opacity: 0.4;
+}

@@ -1,0 +1,142 @@
+/* =============================================================================
+   EDITOR WRAPPER
+   ============================================================================= */
+
+.editor-wrapper-base {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    background-color: var(--color-bg-default);
+    resize: vertical;
+    min-height: 140px;
+    height: 265px;
+    transition: border-color var(--transition-fast);
+}
+
+.editor-wrapper-base:hover {
+    border-color: var(--color-fg-muted);
+}
+
+.editor-wrapper-base:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+/* =============================================================================
+   QUERY EDITOR
+   ============================================================================= */
+
+textarea.sql-editor {
+    resize: vertical;
+    min-height: 112px;
+    font-family: var(--font-mono);
+}
+
+.actions-row,
+.history-row {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+
+.actions-row .btn-run {
+    flex: 0 1 80%;
+    min-width: 200px;
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.actions-row .btn-run:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+}
+
+.actions-row .btn-save {
+    flex: 0 1 20%;
+    min-width: 60px;
+}
+
+/* Container for the TreeSelect component displaying saved queries */
+.history-row .history-treeselect {
+    flex: 1 1 80%;
+    min-width: 200px;
+}
+
+.history-row>.btn {
+    flex: 0 1 20%;
+    min-width: 60px;
+}
+
+@media (max-width: 576px) {
+
+    .actions-row,
+    .history-row {
+        flex-wrap: wrap;
+    }
+
+    .actions-row .btn-run,
+    .actions-row .btn-save,
+    .history-row .history-treeselect,
+    .history-row>.btn {
+        flex: 1 0 100%;
+        min-width: 0;
+    }
+}
+
+.btn-manage .btn-text,
+.btn-save .btn-text {
+    display: inline;
+}
+
+/* =============================================================================
+   MONACO EDITOR
+   ============================================================================= */
+
+#tabContent .form-control:focus-within {
+    border-color: var(--color-accent);
+}
+
+#tabContent .form-control .monaco-editor,
+#tabContent .form-control .monaco-editor .overflow-guard {
+    border-radius: inherit;
+}
+
+body[data-bs-theme="light"] .monaco-editor .view-lines,
+body[data-bs-theme="light"] .monaco-editor .margin-view-overlays {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path d="M11.5 6h1v12h-1z" fill="black"/><path d="M10 6h4" stroke="black" stroke-width="1"/><path d="M10 18h4" stroke="black" stroke-width="1"/></svg>') 16 16, text !important;
+}
+
+body[data-bs-theme="dark"] .monaco-editor .view-lines,
+body[data-bs-theme="dark"] .monaco-editor .margin-view-overlays {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path d="M11.5 6h1v12h-1z" fill="white"/><path d="M10 6h4" stroke="white" stroke-width="1"/><path d="M10 18h4" stroke="white" stroke-width="1"/></svg>') 16 16, text !important;
+}
+
+/* =============================================================================
+   INLINE EDITOR (for result view editing)
+   ============================================================================= */
+
+.editor-wrapper-inline {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    background-color: var(--color-bg-default);
+    resize: vertical;
+    min-height: 60px;
+    height: 80px;
+    max-height: 300px;
+    transition: border-color var(--transition-fast);
+}
+
+.editor-wrapper-inline:hover {
+    border-color: var(--color-fg-muted);
+}
+
+.editor-wrapper-inline:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+}

@@ -1,0 +1,49 @@
+{
+  "name": "Joinery",
+  "version": "0.1.0",
+  "description": "Privacy-first local data analytics powered by DuckDB.",
+  "license": "Apache-2.0",
+  "author": "Joinery Labs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joinery-labs/joinery.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joinery-labs/joinery/issues"
+  },
+  "homepage": "https://github.com/joinery-labs/joinery",
+  "keywords": [
+    "duckdb",
+    "sql",
+    "data-analytics",
+    "sql-workbench"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node --max-old-space-size=4096 node_modules/vite/bin/vite.js build",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@duckdb/duckdb-wasm": "^1.31.0",
+    "apache-arrow": "^18.0.0",
+    "@fontsource/inter": "^5.1.1",
+    "@fontsource/jetbrains-mono": "^5.1.1",
+    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-dialog": "^2.0.0",
+    "@tauri-apps/plugin-fs": "^2.0.0",
+    "@tauri-apps/plugin-shell": "^2.0.0",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "dayjs": "^1.11.13",
+    "jszip": "^3.10.1",
+    "monaco-editor": "^0.52.2",
+    "sql-formatter": "^15.6.8",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "vite": "^6.0.0"
+  }
+}

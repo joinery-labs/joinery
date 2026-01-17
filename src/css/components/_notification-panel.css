@@ -1,0 +1,275 @@
+/* =============================================================================
+   NOTIFICATION PANEL
+   Unified notification system for instant messages and operation progress.
+   ============================================================================= */
+
+.notification-panel {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 340px;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    z-index: var(--z-toast);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notification-panel.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Notification Item
+   ----------------------------------------------------------------------------- */
+
+.notification-item {
+    background: var(--color-bg-default);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem 1rem;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.notification-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-item.removing {
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+/* -----------------------------------------------------------------------------
+   Notification Header
+   ----------------------------------------------------------------------------- */
+
+.notification-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+}
+
+.notification-icon i {
+    font-size: 1rem;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-fg-default);
+    line-height: 1.3;
+}
+
+.notification-body,
+.notification-status {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-top: 0.125rem;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.notification-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: color 0.15s ease, background-color 0.15s ease;
+    font-size: 1.125rem;
+}
+
+.notification-close:hover {
+    color: var(--color-fg-default);
+    background: var(--color-bg-subtle);
+}
+
+/* -----------------------------------------------------------------------------
+   Progress Bar
+   ----------------------------------------------------------------------------- */
+
+.notification-bar-container {
+    height: 4px;
+    background: var(--color-border-default);
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.notification-bar {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+    transition: width 0.2s ease;
+}
+
+.notification-percent {
+    font-size: 0.625rem;
+    color: var(--color-fg-subtle);
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Expandable Details
+   ----------------------------------------------------------------------------- */
+
+.notification-details {
+    max-height: 25vh;
+    overflow: auto;
+    margin-top: 0.5rem;
+}
+
+.notification-details-list {
+    margin: 0;
+    padding-left: 1rem;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.notification-details-list li {
+    margin-bottom: 0.25rem;
+}
+
+.notification-controls {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.25rem;
+}
+
+.notification-toggle {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-decoration: underline;
+    color: inherit;
+}
+
+.notification-toggle:hover {
+    opacity: 0.8;
+}
+
+/* -----------------------------------------------------------------------------
+   Variant Colors
+   ----------------------------------------------------------------------------- */
+
+.notification-item.primary {
+    border-left: 3px solid var(--color-accent);
+}
+
+.notification-item.primary .notification-icon {
+    color: var(--color-accent);
+}
+
+.notification-item.success {
+    border-left: 3px solid var(--color-success);
+}
+
+.notification-item.success .notification-icon {
+    color: var(--color-success);
+}
+
+.notification-item.danger {
+    border-left: 3px solid var(--color-danger);
+}
+
+.notification-item.danger .notification-icon {
+    color: var(--color-danger);
+}
+
+.notification-item.warning {
+    border-left: 3px solid var(--color-warning);
+}
+
+.notification-item.warning .notification-icon {
+    color: var(--color-warning);
+}
+
+/* -----------------------------------------------------------------------------
+   Completion States
+   ----------------------------------------------------------------------------- */
+
+.notification-item.complete.success {
+    border-color: var(--color-success);
+    border-left-width: 3px;
+    background-color: var(--color-success-muted);
+}
+
+.notification-item.complete.success .notification-title,
+.notification-item.complete.success .notification-status {
+    color: var(--color-success);
+}
+
+.notification-item.complete.danger {
+    border-color: var(--color-danger);
+    border-left-width: 3px;
+    background-color: var(--color-danger-muted);
+}
+
+.notification-item.complete.danger .notification-title,
+.notification-item.complete.danger .notification-status {
+    color: var(--color-danger);
+}
+
+/* -----------------------------------------------------------------------------
+   Spinning Animation
+   ----------------------------------------------------------------------------- */
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.notification-icon .spin {
+    animation: spin 1s linear infinite;
+}
+
+.notification-item.complete .notification-icon .spin {
+    animation: none;
+}

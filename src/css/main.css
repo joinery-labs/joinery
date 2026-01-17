@@ -1,0 +1,115 @@
+/* =============================================================================
+   MAIN.CSS
+   
+   Main entry point for the application's CSS.
+   Imports are ordered by dependency layers:
+   
+   1. Vendor     - External libraries and frameworks
+   2. Base       - Reset, tokens, and global defaults
+   3. Components - Reusable UI elements
+   4. Layout     - Major structural regions
+   5. Features   - Page-specific styles
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   VENDOR LAYER
+   ----------------------------------------------------------------------------- */
+
+/* Fonts */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+/* Bootstrap */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.min.css';
+
+/* -----------------------------------------------------------------------------
+   BASE LAYER
+   ----------------------------------------------------------------------------- */
+
+/* Design tokens */
+@import './base/_tokens.css';
+
+/* Themes */
+@import './base/_themes.css';
+
+/* Reset */
+@import './base/_reset.css';
+
+/* Typography */
+@import './base/_typography.css';
+
+/* Utilities */
+@import './base/_utilities.css';
+
+/* -----------------------------------------------------------------------------
+   COMPONENT LAYER
+   ----------------------------------------------------------------------------- */
+
+/* Buttons */
+@import './components/_buttons.css';
+
+/* Cards */
+@import './components/_cards.css';
+
+/* Forms */
+@import './components/_forms.css';
+
+/* Links */
+@import './components/_links.css';
+
+/* Tables */
+@import './components/_tables.css';
+
+/* Dropdowns */
+@import './components/_dropdowns.css';
+
+/* Modals */
+@import './components/_modals.css';
+
+/* Notifications */
+@import './components/_notification-panel.css';
+
+/* Alerts */
+@import './components/_alerts.css';
+
+/* Chips and Badges */
+@import './components/_chips.css';
+
+/* Pagination */
+@import './components/_pagination.css';
+
+/* TreeSelect */
+@import './components/_treeselect.css';
+
+/* Overlay */
+@import './components/_overlay.css';
+
+/* -----------------------------------------------------------------------------
+   LAYOUT LAYER
+   ----------------------------------------------------------------------------- */
+
+/* Toolbar/Header */
+@import './layout/_toolbar.css';
+
+/* Tabs */
+@import './layout/_tabs.css';
+
+/* Masonry Grid */
+@import './layout/_masonry.css';
+
+/* -----------------------------------------------------------------------------
+   FEATURE LAYER
+   ----------------------------------------------------------------------------- */
+
+/* Dropzone */
+@import './features/_dropzone.css';
+
+/* Editor */
+@import './features/_editor.css';
+
+/* Results */
+@import './features/_results.css';

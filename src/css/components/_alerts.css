@@ -1,0 +1,34 @@
+/* =============================================================================
+   ALERTS
+   ============================================================================= */
+
+.alert {
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    font-size: 14px;
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.alert-info {
+    background-color: var(--color-info-muted);
+    border-color: var(--color-info);
+    color: var(--color-info);
+}
+
+.alert-warning {
+    background-color: var(--color-warning-muted);
+    border-color: var(--color-warning);
+    color: var(--color-warning);
+}
+
+.alert-danger {
+    background-color: var(--color-danger-muted);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+.alert-success {
+    background-color: var(--color-success-muted);
+    border-color: var(--color-success);
+    color: var(--color-success);
+}

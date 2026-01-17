@@ -1,0 +1,20 @@
+/* =============================================================================
+   PAGINATION
+   ============================================================================= */
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.pagination-controls .btn {
+    min-width: 32px;
+}
+
+.pagination-controls .page-info {
+    font-size: 12px;
+    color: var(--color-fg-muted);
+    padding: 0 var(--spacing-md);
+}

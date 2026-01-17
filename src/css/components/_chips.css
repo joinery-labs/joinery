@@ -1,0 +1,32 @@
+/* =============================================================================
+   FILTER CHIPS / BADGES
+   ============================================================================= */
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 2px var(--spacing-sm);
+    background-color: var(--color-accent-muted);
+    border: 1px solid var(--color-accent);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-accent);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.filter-chip:hover {
+    background-color: var(--color-accent);
+    color: #ffffff;
+}
+
+.filter-chip .remove {
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.filter-chip:hover .remove {
+    opacity: 1;
+}

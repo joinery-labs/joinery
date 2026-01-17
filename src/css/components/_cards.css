@@ -1,0 +1,18 @@
+/* =============================================================================
+   CARDS
+   ============================================================================= */
+
+.card.card-base {
+    background-color: var(--color-bg-default);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    height: 100%;
+}
+
+.card-base:hover {
+    border-color: var(--color-border-default);
+}
+
+.card-base .card-body {
+    padding: var(--spacing-xl);
+}
