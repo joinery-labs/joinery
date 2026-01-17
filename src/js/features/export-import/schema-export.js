@@ -81,7 +81,7 @@ async function generateSchemaSQL(maxRowsPerTable = 3) {
 
         const versionResult = await conn.query(`SELECT version() as version;`);
         const version = versionResult.toArray()[0]?.version || 'unknown';
-        const hdr = `-- joinery schema export\n-- generated for use in DuckDB-WASM environments\n-- DuckDB version: ${version}\n\n`;
+        const hdr = `-- Joinery schema export\n-- DuckDB version: ${version}\n\n`;
         parts.push(hdr);
 
         const result = await conn.query(`
