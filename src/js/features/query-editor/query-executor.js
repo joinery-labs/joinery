@@ -85,7 +85,14 @@ export async function executeStatements(sql, output, options = {}) {
 
                 const schema = arrowTable.schema;
                 const columns = schema.fields.map(f => f.name);
-                const columnTypes = schema.fields.map(f => f.type?.toString?.() ?? String(f.type || ""));
+                // Extract column metadata for display formatting
+                const columnTypes = schema.fields.map(f => {
+                    const type = f.type;
+                    return {
+                        name: type?.toString?.() ?? String(type || ""),
+                        scale: type?.scale ?? null
+                    };
+                });
 
                 const block = renderResultBlock(
                     "Result",

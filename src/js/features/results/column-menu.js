@@ -111,13 +111,9 @@ function enableDrag(menu, signal) {
  * @returns {string} HTML string
  */
 export function buildColumnMenuHTML(columnName, type) {
-  // Show info button for date/datetime/time columns
-  const showTipBtn = type === "date" || type === "datetime" || type === "time";
-
   return `
-    <div class="head mb-1 d-flex align-items-center justify-content-between">
+    <div class="head mb-1">
       <span>${escapeHTML(columnName)}</span>
-      ${showTipBtn ? `<button class="btn btn-link p-0" id="tipBtn" title="Format info"><i class="bi bi-info-circle"></i></button>` : ""}
     </div>
       <div class="colmenu-section-title">Sort</div>
       <div class="d-flex gap-2 mb-2">
@@ -164,11 +160,7 @@ function buildFilterHTML(type) {
           <div class="col"><input type="text" class="form-control form-control-base" id="dateFrom" placeholder="${type === 'date' ? '1999-12-31' : '1999-12-31 23:59:59'}"></div>
           <div class="col"><input type="text" class="form-control form-control-base" id="dateTo" placeholder="${type === 'date' ? '2050-12-31' : '2050-12-31 23:59:59'}"></div>
         </div>
-        <div class="alert alert-info small py-2 px-2 d-none" id="tipAlert">
-          <div class="fw-semibold mb-1">Accepted formats</div>
-          <div>Date: <ul><li><code>31/12/1999</code></li><li><code>1999-12-31</code></li></ul></div>
-          <div>DateTime: <ul><li><code>31/12/1999 23:59</code></li><li><code>1999-12-31 23:59</code></li><li><code>31/12/1999 23:59:59.999 Z</code></li><li><code>1999-12-31 23:59:59.999 Z</code></li></ul></div>
-        </div>
+
         `;
   }
 
@@ -178,10 +170,7 @@ function buildFilterHTML(type) {
           <div class="col"><input type="text" class="form-control form-control-base" id="timeFrom" placeholder="00:00:00"></div>
           <div class="col"><input type="text" class="form-control form-control-base" id="timeTo" placeholder="23:59:59"></div>
         </div>
-        <div class="alert alert-info small py-2 px-2 d-none" id="tipAlert">
-          <div class="fw-semibold mb-1">Accepted formats</div>
-          <div>Time: <ul><li><code>14:30</code></li><li><code>14:30:45</code></li><li><code>14:30:45.123</code></li></ul></div>
-        </div>
+
         `;
   }
 
@@ -249,14 +238,7 @@ export function hydrateColumnMenuInputs(menu, sortCol, colIdx, sortAsc, filter, 
     }
   }
 
-  // Setup tip button for date/datetime/time columns
-  const tipBtn = $("#tipBtn", menu);
-  if (tipBtn && (type === "date" || type === "datetime" || type === "time")) {
-    const tip = $("#tipAlert", menu);
-    if (tip) {
-      tipBtn.addEventListener("click", () => tip.classList.toggle("d-none"));
-    }
-  }
+
 }
 
 /**

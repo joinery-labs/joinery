@@ -19,38 +19,70 @@ import {
 // ============================================================================
 
 /**
- * Format a cell value based on its type string.
+ * Format a cell value based on its type info.
+ * Accepts column metadata objects {name, scale} or type strings.
  * 
  * @param {*} val - Cell value
- * @param {string} typeStr - Type string from schema
+ * @param {object|string} typeInfo - Column metadata {name, scale} or type string
  * @returns {*} Formatted value
  */
-export function formatCellValue(val, typeStr) {
+export function formatCellValue(val, typeInfo) {
     if (val == null) return val;
 
-    const normalized = normalizeTypeName(typeStr);
+    // Extract normalized type string early - needed for date/time detection
+    const normalized = typeInfo ? normalizeTypeName(getTypeString(typeInfo)) : "";
 
-    // Use centralized formatValueForDisplay for date/time types
-    // Handles BigInt, Date, number consistently
-    if (normalized === "DATE" ||
+    // Check if this is a date/time type that requires special formatting
+    const isDateTimeType = normalized === "DATE" ||
         normalized === "TIMESTAMP" || normalized === "TIMESTAMPTZ" ||
         normalized === "TIME" || normalized === "TIMETZ" ||
-        normalized === "INTERVAL") {
-        return formatValueForDisplay(val, normalized);
-    }
+        normalized === "INTERVAL";
 
-    // Handle BigInt for numeric types - convert to string to preserve precision
+    // Handle BigInt values (Arrow returns BigInt for large integers and some Decimal types)
     if (typeof val === "bigint") {
+        // Decimal types have scale metadata
+        if (typeInfo && typeof typeInfo === "object" && typeof typeInfo.scale === "number") {
+            return formatDecimalBigInt(val, typeInfo.scale);
+        }
+        // Date/time BigInt values need formatting
+        if (isDateTimeType) {
+            return formatValueForDisplay(val, normalized);
+        }
         return String(val);
     }
 
-    // Handle Date objects that don't have a type hint
+    // Primitives: pass through UNLESS it's a date/time type that needs formatting
+    const valType = typeof val;
+    if (valType === "number" || valType === "string" || valType === "boolean") {
+        // Date/time values stored as numbers/strings need formatting
+        if (isDateTimeType) {
+            return formatValueForDisplay(val, normalized);
+        }
+        return val;
+    }
+
+    // Handle Decimal objects (non-Date objects with scale metadata)
+    if (typeInfo && typeof typeInfo === "object" && typeof typeInfo.scale === "number" &&
+        typeof val === "object" && val !== null && !(val instanceof Date)) {
+        const unscaled = String(val);
+        return formatDecimalString(unscaled, typeInfo.scale);
+    }
+
+    // Date objects - use type hint if available, otherwise auto-detect
     if (val instanceof Date) {
+        if (normalized === "DATE" || normalized === "TIMESTAMP" || normalized === "TIMESTAMPTZ") {
+            return formatValueForDisplay(val, normalized);
+        }
         return formatValueForDisplay(val, hasTimePart(val) ? "TIMESTAMP" : "DATE");
     }
 
-    // Handle objects (JSON, etc.)
-    if (typeof val === "object" && val !== null) {
+    // Remaining date/time types (already handled above for primitives, this catches objects)
+    if (isDateTimeType) {
+        return formatValueForDisplay(val, normalized);
+    }
+
+    // Objects
+    if (typeof val === "object") {
         try {
             return JSON.stringify(val);
         } catch {
@@ -62,10 +94,89 @@ export function formatCellValue(val, typeStr) {
 }
 
 /**
- * Detect column types from schema type strings.
+ * Format a BigInt value from Arrow Decimal type with proper decimal placement.
+ * Handles any precision and scale combination.
+ * 
+ * @param {bigint} val - The scaled BigInt value from Arrow Decimal column
+ * @param {number} scale - Number of digits after decimal point
+ * @returns {string} Formatted decimal string
+ */
+function formatDecimalBigInt(val, scale) {
+    // Guard: scale must be positive and within reasonable bounds (DuckDB max is 38)
+    if (scale <= 0 || scale > 100) {
+        return String(val);
+    }
+
+    const isNegative = val < 0n;
+    const absVal = isNegative ? -val : val;
+    const str = String(absVal);
+
+    let result;
+    if (str.length <= scale) {
+        const padded = str.padStart(scale, '0');
+        result = '0.' + padded;
+    } else {
+        const intPart = str.slice(0, -scale);
+        const fracPart = str.slice(-scale);
+        result = intPart + '.' + fracPart;
+    }
+
+    return isNegative ? '-' + result : result;
+}
+
+/**
+ * Format a string value from Arrow Decimal object with proper decimal placement.
+ * Arrow Decimal objects return the unscaled integer as a string from toString().
+ * 
+ * @param {string} str - The unscaled integer string from Arrow Decimal.toString()
+ * @param {number} scale - Number of digits after decimal point
+ * @returns {string} Formatted decimal string
+ */
+function formatDecimalString(str, scale) {
+    // Guard: scale must be positive, within bounds, and string must be non-empty
+    if (scale <= 0 || scale > 100 || !str) {
+        return str || '';
+    }
+
+    const isNegative = str.startsWith('-');
+    const absStr = isNegative ? str.slice(1) : str;
+
+    let result;
+    if (absStr.length <= scale) {
+        const padded = absStr.padStart(scale, '0');
+        result = '0.' + padded;
+    } else {
+        const intPart = absStr.slice(0, -scale);
+        const fracPart = absStr.slice(-scale);
+        result = intPart + '.' + fracPart;
+    }
+
+    return isNegative ? '-' + result : result;
+}
+
+/**
+ * Extract type string from column metadata or pass through string.
+ * @param {object|string} typeInfo - Column metadata {name, scale} or type string
+ * @returns {string} Type string
+ */
+function getTypeString(typeInfo) {
+    if (typeInfo && typeof typeInfo === "object") {
+        // Prefer explicit name property from column metadata
+        if (typeof typeInfo.name === "string") {
+            return typeInfo.name;
+        }
+        // Fallback to toString() for other object types
+        return typeInfo.toString?.() ?? "";
+    }
+    return String(typeInfo || "");
+}
+
+/**
+ * Detect column types from schema types.
+ * Accepts column metadata objects {name, scale} or type strings.
  * Uses centralized getDisplayCategory for O(1) lookup.
  * 
- * @param {Array<string>} schemaTypes - Array of schema type strings from DuckDB
+ * @param {Array<object|string>} schemaTypes - Array of column metadata {name, scale} or type strings
  * @param {number} count - Number of columns
  * @returns {Array<string>} Array of type strings: 'text', 'number', 'date', 'time', 'datetime', 'boolean'
  */
@@ -80,8 +191,10 @@ export function detectColumnTypesFromSchema(schemaTypes, count) {
             continue;
         }
 
-        // Use centralized display category for accurate detection (O(1) lookup)
-        const category = getDisplayCategory(rawType);
+        const typeStr = getTypeString(rawType);
+
+        // Map to display category
+        const category = getDisplayCategory(typeStr);
 
         switch (category) {
             case DisplayTypeCategory.NUMBER:

@@ -94,6 +94,8 @@ const TYPE_ALIASES = Object.freeze({
     "FLOAT4": "REAL",
     "FLOAT8": "DOUBLE",
     "NUMERIC": "DECIMAL",
+    "DECIMAL128": "DECIMAL",
+    "DECIMAL256": "DECIMAL",
     // Text aliases
     "TEXT": "VARCHAR",
     "STRING": "VARCHAR",
