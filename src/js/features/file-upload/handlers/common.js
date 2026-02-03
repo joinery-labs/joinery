@@ -3,7 +3,8 @@
  * Shared utilities for JSON and Parquet handlers to eliminate duplication
  */
 
-import { quoteIdent, normalizeColumnLabels } from '../../../utils/sql.js';
+import { quoteIdent } from '../../../utils/sql.js';
+import { normalizeTableColumns } from '../table-utils.js';
 
 // ============================================================================
 // INTERNAL UTILITIES
@@ -34,29 +35,6 @@ async function castColumnsToVarchar(conn, tmpTable, finalTable) {
     await conn.query(`CREATE TABLE ${quoteIdent(finalTable)} AS SELECT ${castList} FROM ${quoteIdent(tmpTable)};`);
 }
 
-/**
- * Normalize column names in an existing table
- * @param {object} conn - DuckDB connection
- * @param {string} tableName - Table to normalize
- * @returns {Promise<void>}
- */
-async function normalizeTableColumns(conn, tableName) {
-    try {
-        const info = await conn.query(`PRAGMA table_info(${quoteIdent(tableName)});`);
-        const cols = info.toArray().map(r => r.name);
-        const { sql: newCols } = normalizeColumnLabels(cols, { fallback: "Column" });
-
-        for (let i = 0; i < cols.length; i++) {
-            if (newCols[i] !== cols[i]) {
-                await conn.query(
-                    `ALTER TABLE ${quoteIdent(tableName)} RENAME COLUMN ${quoteIdent(cols[i])} TO ${quoteIdent(newCols[i])};`
-                );
-            }
-        }
-    } catch {
-        // Ignore normalization errors
-    }
-}
 
 /**
  * Clean up temporary table

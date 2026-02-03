@@ -14,8 +14,8 @@
 }
 
 .table-base ::selection {
-    background-color: var(--color-table-selection);
-    color: #ffffff;
+    background-color: var(--color-bg-text-selection);
+    color: var(--color-text-selection);
 }
 
 .table-base thead th {

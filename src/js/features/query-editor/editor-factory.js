@@ -1,8 +1,6 @@
 /**
  * Monaco Editor Factory
- * 
- * Manages the creation, configuration, and lifecycle of Monaco editor instances.
- * Handles both main query tabs and embedded editor instances with SQL-specific features.
+ * Creates, configures, and manages Monaco editor instances.
  */
 
 import { format as sqlFormat } from 'sql-formatter';
@@ -10,7 +8,7 @@ import { getMonaco } from '../../editor/monaco-loader.js';
 import { enableSqlSuggestions } from '../../editor/sql-intellisense.js';
 import { getCachedElement } from '../../utils/dom.js';
 
-// Registry of active editor instances mapped by their unique identifiers
+// Active editor instances
 const EDITORS = new Map();
 
 /**
@@ -60,11 +58,10 @@ const DEFAULT_OPTIONS = {
  * @param {string} hostId - Host element ID for Monaco
  * @param {string|number} editorId - Unique editor identifier
  * @param {string} prefillText - Initial SQL text
- * @param {function} schemaFetcher - Function to fetch schema for IntelliSense
  * @param {object} options - Optional configuration
  * @param {function} onReady - Callback when editor is ready: (editor, isFallback) => void
  */
-export async function createEditor(wrapId, hostId, editorId, prefillText, schemaFetcher, options = {}, onReady = null) {
+export async function createEditor(wrapId, hostId, editorId, prefillText, options = {}, onReady = null) {
   const opts = { ...DEFAULT_OPTIONS, ...options };
 
   try {
@@ -117,18 +114,16 @@ export async function createEditor(wrapId, hostId, editorId, prefillText, schema
 
     EDITORS.set(editorId, editor);
 
-    // Initialize layout observer to handle window or container resizing
+    // Layout observer for resize handling
     const resizeObserver = new ResizeObserver(() => editor.layout());
     resizeObserver.observe(wrapEl);
     editor._resizeObserver = resizeObserver;
 
-    // Register custom keyboard shortcuts and actions
+    // Keyboard shortcuts
     addEditorActions(editor, monaco, editorId, opts);
 
-    // Enable IntelliSense
-    if (schemaFetcher) {
-      enableSqlSuggestions(schemaFetcher);
-    }
+    // SQL IntelliSense
+    enableSqlSuggestions();
 
     if (onReady) onReady(editor, false);
   } catch (err) {

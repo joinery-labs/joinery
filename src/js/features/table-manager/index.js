@@ -7,6 +7,7 @@
 
 import { $ } from '../../utils/dom.js';
 import { on, Events } from '../../core/event-bus.js';
+import { getTablesBySchema } from '../../core/schema-cache.js';
 
 import {
     getCurrentSchema,
@@ -15,8 +16,6 @@ import {
     setLastSelectedTable
 } from './table-state.js';
 import {
-    fetchAllTables,
-    fetchAllSchemas,
     populateSchemaDropdown,
     populateTableDropdown,
     updateVisibility,
@@ -83,27 +82,11 @@ on(Events.DATABASE_SWITCHED, () => {
  */
 export async function updateTableDropdown(schemaName = null) {
     try {
-        // Fetch tables and schemas in parallel for efficiency
-        const [allRows, dbSchemas] = await Promise.all([
-            fetchAllTables(),
-            fetchAllSchemas()
-        ]);
+        const { allTables, schemas } = await getTablesBySchema();
 
-        // Build schemas list: ensure "main" is first, include all DB schemas
-        const schemasFromTables = new Set(allRows.map(r => r.table_schema).filter(Boolean));
-        const allSchemas = new Set(dbSchemas);
-        schemasFromTables.forEach(s => allSchemas.add(s));
-
-        let schemas = Array.from(allSchemas);
-        // Move "main" to front if present, otherwise add it
-        schemas = schemas.filter(s => s !== "main");
-        schemas.unshift("main");
-
-        const hasAnyTables = allRows.length > 0;
-        // User schemas = any schema other than "main"
+        const hasAnyTables = allTables.length > 0;
         const hasUserSchemas = schemas.some(s => s !== "main");
 
-        // Set current schema
         if (schemaName) {
             setCurrentSchema(schemaName);
         } else {
@@ -114,22 +97,17 @@ export async function updateTableDropdown(schemaName = null) {
         }
 
         const currentSchemaName = getCurrentSchema();
-
-        // Populate schema dropdown
         populateSchemaDropdown(schemas, currentSchemaName);
 
-        // Filter tables for current schema
-        const rows = allRows.filter(r => r.table_schema === currentSchemaName);
+        const rows = allTables.filter(r => r.table_schema === currentSchemaName);
         const tableNames = rows.map(r => r.table_name);
         const hasTablesInCurrentSchema = tableNames.length > 0;
 
-        // Update UI visibility based on content state
         updateVisibility({
             hasAnyTables,
             hasUserSchemas
         });
 
-        // Populate table dropdown and show schema (always populate, even if empty)
         if (hasTablesInCurrentSchema) {
             const previousSelection = getLastSelectedTable(currentSchemaName);
             const selected = populateTableDropdown(tableNames, previousSelection);
@@ -142,7 +120,6 @@ export async function updateTableDropdown(schemaName = null) {
                 setLastSelectedTable(currentSchemaName, null);
             }
         } else {
-            // No tables in current schema
             populateTableDropdown([], null);
             $("#tableSchema").innerHTML = "";
             setLastSelectedTable(currentSchemaName, null);

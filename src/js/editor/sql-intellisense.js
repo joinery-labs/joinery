@@ -1,17 +1,12 @@
 /**
  * SQL IntelliSense Provider
- * Provides schema-aware completion suggestions for the Monaco Editor.
- *
- * Completion Behavior:
- * - schema.         -> Suggests tables/views in the specified schema.
- * - schema.table.   -> Suggests columns in the specified table.
- * - table.          -> Suggests columns (if the table exists in the main schema).
- * - (root level)    -> Suggests keywords, schemas, and main tables/views.
+ * Schema-aware completion suggestions for Monaco Editor.
  */
 
 import { monaco } from './monaco-loader.js';
+import { getIntellisenseSchema } from '../core/schema-cache.js';
 
-// Standard ANSI SQL keywords.
+// ANSI SQL keywords
 const SQL_KEYWORDS = [
     // DML
     'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'NOT', 'NULL', 'IN', 'IS', 'LIKE', 'BETWEEN', 'EXISTS',
@@ -38,10 +33,10 @@ const SQL_KEYWORDS = [
     'TRUE', 'FALSE'
 ];
 
-// Cache CompletionItemKind for reuse.
+// Cached CompletionItemKind reference
 const Kind = monaco.languages.CompletionItemKind;
 
-// Pre-defined keyword suggestions without range information.
+// Pre-built keyword suggestions
 const KEYWORD_TEMPLATES = SQL_KEYWORDS.map(kw => ({
     label: kw,
     kind: Kind.Keyword,
@@ -49,37 +44,9 @@ const KEYWORD_TEMPLATES = SQL_KEYWORDS.map(kw => ({
     detail: ''
 }));
 
-// Module state.
 let _initialized = false;
-let _schemaFetcher = null;
-let _schemaCache = null;
-let _schemaCacheTime = 0;
-const CACHE_TTL_MS = 5000;
 
-/**
- * Retrieves the cached schema or fetches a fresh one if the cache is expired.
- */
-async function getSchema() {
-    if (!_schemaFetcher) return null;
-
-    const now = Date.now();
-    if (_schemaCache && (now - _schemaCacheTime < CACHE_TTL_MS)) {
-        return _schemaCache;
-    }
-
-    try {
-        _schemaCache = await _schemaFetcher();
-        _schemaCacheTime = now;
-        return _schemaCache;
-    } catch (e) {
-        console.warn('Schema fetch failed:', e);
-        return null;
-    }
-}
-
-/**
- * Deduplicates suggestions based on their labels.
- */
+/** Deduplicate suggestions by label. */
 function dedupe(suggestions) {
     const seen = new Set();
     return suggestions.filter(s => {
@@ -90,12 +57,10 @@ function dedupe(suggestions) {
 }
 
 /**
- * Enables SQL IntelliSense for the editor.
- * @param {Function} fetcher - Async function that returns the schema object.
+ * Enable SQL IntelliSense using centralized schema cache.
  */
-export function enableSqlSuggestions(fetcher) {
+export function enableSqlSuggestions() {
     if (_initialized) return;
-    _schemaFetcher = fetcher;
     _initialized = true;
 
     monaco.languages.registerCompletionItemProvider('sql', {
@@ -113,10 +78,10 @@ export function enableSqlSuggestions(fetcher) {
                 endColumn: word.endColumn
             };
 
-            const schema = await getSchema();
+            const schema = await getIntellisenseSchema();
             const suggestions = [];
 
-            // Handle "schema.table." completion pattern.
+            // schema.table. -> columns
             const match2Dots = textBefore.match(/(\w+)\.(\w+)\.$/);
             if (match2Dots) {
                 const key = `${match2Dots[1].toLowerCase()}.${match2Dots[2].toLowerCase()}`;
@@ -129,12 +94,12 @@ export function enableSqlSuggestions(fetcher) {
                 }
             }
 
-            // Handle "identifier." completion pattern.
+            // identifier. -> tables/views or columns
             const match1Dot = textBefore.match(/(\w+)\.$/);
             if (match1Dot) {
                 const id = match1Dot[1].toLowerCase();
 
-                // Suggest tables and views for the matched schema.
+
                 const relations = schema?.relationsBySchema?.get(id);
                 if (relations) {
                     for (const r of relations) {
@@ -142,7 +107,7 @@ export function enableSqlSuggestions(fetcher) {
                     }
                 }
 
-                // Suggest columns for tables in the main schema.
+
                 const cols = schema?.columnsByTable?.get(`main.${id}`);
                 if (cols) {
                     for (const c of cols) {
@@ -155,8 +120,7 @@ export function enableSqlSuggestions(fetcher) {
                 }
             }
 
-            // Provide root-level suggestions: keywords, schemas, and main tables/views.
-            // Add keyword suggestions.
+            // Root-level: keywords, schemas, main tables/views
             for (const tpl of KEYWORD_TEMPLATES) {
                 suggestions.push({ ...tpl, range });
             }
@@ -182,12 +146,4 @@ export function enableSqlSuggestions(fetcher) {
             return { suggestions: dedupe(suggestions) };
         }
     });
-}
-
-/**
- * Invalidates the schema cache. Should be called when the database context changes.
- */
-export function invalidateSchemaCache() {
-    _schemaCache = null;
-    _schemaCacheTime = 0;
 }

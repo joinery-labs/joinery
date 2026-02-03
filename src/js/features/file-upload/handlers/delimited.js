@@ -10,7 +10,7 @@ import { emit, Events } from '../../../core/event-bus.js';
 import { $ } from '../../../utils/dom.js';
 import { sanitizeIdentifier, quoteIdent, sqlStringEscape } from '../../../utils/sql.js';
 
-import { getUniqueTableName } from '../table-utils.js';
+import { getUniqueTableName, normalizeTableColumns } from '../table-utils.js';
 
 // ============================================================================
 // PUBLIC API
@@ -37,7 +37,7 @@ export async function handleDelimitedFile(file) {
         const opts = [
             'auto_detect=true',
             'ignore_errors=false',
-            'normalize_names=true',
+            'normalize_names=false',
             infer ? 'sample_size=10000' : 'all_varchar=true'
         ];
 
@@ -46,6 +46,9 @@ export async function handleDelimitedFile(file) {
             SELECT * FROM read_csv_auto('${sqlStringEscape(readPath)}', ${opts.join(', ')});
         `;
         await conn.query(createSQL);
+
+        // Normalize columns (strip leading underscores etc.)
+        await normalizeTableColumns(conn, tableName);
 
         const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM ${quoteIdent(tableName)};`);
         const rowCount = countResult.toArray()[0]?.cnt || 0;

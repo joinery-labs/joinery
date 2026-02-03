@@ -8,10 +8,11 @@
 import { Modal } from 'bootstrap';
 
 import { getConn } from '../../core/database.js';
+import { getTableColumns } from '../../core/schema-cache.js';
 import { notify, startNotification, NOTIFICATION_TIMING } from '../../ui/notification-panel.js';
 import { ensureModal } from '../../ui/templates.js';
 import { escapeHTML, $ } from '../../utils/dom.js';
-import { quoteIdent, sqlStringEscape } from '../../utils/sql.js';
+import { quoteIdent } from '../../utils/sql.js';
 import { getCurrentSchema } from './table-state.js';
 import { showTableSchema } from './schema-viewer.js';
 import { TreeSelect } from '../../ui/treeselect.js';
@@ -48,33 +49,20 @@ let cleanupListenerAttached = false;
  */
 export async function openSchemaEditor(tableName) {
     try {
-        const conn = getConn();
         const currentSchemaName = getCurrentSchema();
+        const rows = await getTableColumns(currentSchemaName, tableName);
 
-        const info = await conn.query(`
-            SELECT column_name, data_type 
-            FROM information_schema.columns 
-            WHERE table_schema='${sqlStringEscape(currentSchemaName)}'
-              AND table_name='${sqlStringEscape(tableName)}' 
-            ORDER BY ordinal_position;
-        `);
-
-        const rows = info.toArray();
-
-        // Ensure modal exists before accessing its elements
         const modalEl = ensureModal('schemaTypeModal');
         if (!modalEl) return;
 
         const body = $("#schemaTypeBody");
         body.innerHTML = buildTypeEditorHTML(rows);
 
-        // Attach cleanup listener (only once)
         if (!cleanupListenerAttached) {
             modalEl.addEventListener('hidden.bs.modal', destroyTypeSelects);
             cleanupListenerAttached = true;
         }
 
-        // Initialize TreeSelect instances after DOM is ready
         initializeTypeSelects(rows);
 
         const modal = new Modal(modalEl, { focus: false });
@@ -224,17 +212,10 @@ async function validateAndApplySchema(tableName) {
     const conn = getConn();
 
     try {
-        const infoRes = await conn.query(`
-            SELECT column_name, data_type
-            FROM information_schema.columns
-            WHERE table_schema='${sqlStringEscape(currentSchemaName)}'
-              AND table_name='${sqlStringEscape(tableName)}'
-            ORDER BY ordinal_position;
-        `);
-
+        const cols = await getTableColumns(currentSchemaName, tableName);
         const current = {};
-        for (const r of infoRes.toArray()) {
-            current[r.column_name] = normalizeTypeName(r.data_type);
+        for (const col of cols) {
+            current[col.column_name] = normalizeTypeName(col.data_type);
         }
 
         const changes = Object.entries(newTypesByCol).filter(

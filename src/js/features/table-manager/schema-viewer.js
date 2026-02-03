@@ -6,6 +6,7 @@
  */
 
 import { getConn } from '../../core/database.js';
+import { getTableColumns } from '../../core/schema-cache.js';
 import { escapeHTML, $, $$ } from '../../utils/dom.js';
 import { quoteIdent, sqlStringEscape } from '../../utils/sql.js';
 import { getCurrentSchema } from './table-state.js';
@@ -35,16 +36,8 @@ export async function showTableSchema(tableName, onDeleteCallback) {
         ? `${quoteIdent(currentSchemaName)}.${quoteIdent(tableName)}`
         : quoteIdent(tableName);
 
-    // Fetch row count, column details, and primary key constraints in parallel
-    const [countRes, infoRes, pkRes] = await Promise.all([
+    const [countRes, pkRes, cols] = await Promise.all([
       conn.query(`SELECT COUNT(*) as c FROM ${qualifiedName};`),
-      conn.query(`
-            SELECT column_name, data_type, is_nullable, column_default
-            FROM information_schema.columns 
-            WHERE table_schema='${sqlStringEscape(currentSchemaName)}'
-              AND table_name='${sqlStringEscape(tableName)}'
-            ORDER BY ordinal_position;
-        `),
       conn.query(`
             SELECT kcu.column_name
             FROM information_schema.table_constraints tc
@@ -55,12 +48,12 @@ export async function showTableSchema(tableName, onDeleteCallback) {
             WHERE tc.constraint_type = 'PRIMARY KEY'
               AND tc.table_schema = '${sqlStringEscape(currentSchemaName)}'
               AND tc.table_name = '${sqlStringEscape(tableName)}';
-        `)
+        `),
+      getTableColumns(currentSchemaName, tableName)
     ]);
 
     const count = countRes.toArray()[0]?.c || 0;
     const pkColumns = new Set(pkRes.toArray().map(r => r.column_name));
-    const cols = infoRes.toArray();
     const schemaHtml = buildSchemaHTML(tableName, count, cols, pkColumns);
 
     $("#tableSchema").innerHTML = schemaHtml;

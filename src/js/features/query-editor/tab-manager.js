@@ -9,6 +9,7 @@
 import { Tab } from 'bootstrap';
 
 import { escapeHTML, $, $$, getCachedElement, clearCachedElement } from '../../utils/dom.js';
+import { getSchemaBrowserHTML } from './schema-browser.js';
 
 // ============================================================================
 // State
@@ -83,31 +84,39 @@ export function createQueryTab(id, defaultTitle) {
     div.id = newContentId;
     div.setAttribute("role", "tabpanel");
     div.innerHTML = `
-        <div class="mb-2 history-row">
-        <div id="history-treeselect-${id}" class="history-treeselect"></div>
-        <button id="manage-history-${id}" class="btn btn-base btn-manage" title="Manage saved queries">
-            <i class="bi bi-bookmark-star"></i>
-            <span class="btn-text">Manage</span>
-        </button>
+        <div class="query-tab-layout-wrapper">
+            <div class="query-tab-layout">
+                ${getSchemaBrowserHTML(id)}
+                <div class="query-tab-main">
+                    <div class="mb-2 history-row">
+                        <div id="history-treeselect-${id}" class="history-treeselect"></div>
+                        <button id="manage-history-${id}" class="btn btn-base btn-manage" title="Manage saved queries">
+                            <i class="bi bi-bookmark-star"></i>
+                            <span class="btn-text">Manage</span>
+                        </button>
+                    </div>
+                    <div id="sql-editor-wrap-${id}"
+                        class="editor-wrapper-base form-control mb-2 p-0 loading-overlay-zone">
+                        <div id="sql-editor-${id}" style="height: 100%;"></div>
+                        <div id="editor-loading-${id}" class="loading-overlay">
+                            <div class="loading-overlay-spinner"></div>
+                            <span class="loading-overlay-text">Executing query...</span>
+                        </div>
+                    </div>
+                    <div class="actions-row">
+                        <button id="run-query-${id}" class="btn btn-base btn-run" title="Run Query (Ctrl + Enter)">
+                            <i class="bi bi-play-circle"></i>
+                            <span>Run</span>
+                        </button>
+                        <button id="save-query-${id}" class="btn btn-base btn-save" title="Save query to history">
+                            <i class="bi bi-bookmark-plus"></i>
+                            <span class="btn-text">Save</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="sql-editor-wrap-${id}"
-            class="editor-wrapper-base form-control mb-2 p-0 loading-overlay-zone">
-        <div id="sql-editor-${id}" style="height: 100%;"></div>
-        <div id="editor-loading-${id}" class="loading-overlay">
-            <div class="loading-overlay-spinner"></div>
-            <span class="loading-overlay-text">Executing query...</span>
-        </div>
-        </div>
-        <div class="mb-4 actions-row">
-        <button id="run-query-${id}" class="btn btn-base btn-run" title="Run Query (Ctrl + Enter)">
-            <i class="bi bi-play-circle"></i>
-            <span>Run</span>
-        </button>
-        <button id="save-query-${id}" class="btn btn-base btn-save" title="Save query to history">
-            <i class="bi bi-bookmark-plus"></i>
-            <span class="btn-text">Save</span>
-        </button>
-        </div>
+        <div class="mb-4"></div>
         <div id="query-output-${id}"></div>
     `;
 

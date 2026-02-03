@@ -9,6 +9,7 @@ import { tableToIPC } from 'apache-arrow';
 
 import { getConn } from '../../core/database.js';
 import { emit, Events } from '../../core/event-bus.js';
+import { getSchemaList } from '../../core/schema-cache.js';
 import { notify, startNotification, NOTIFICATION_TIMING } from '../../ui/notification-panel.js';
 import { ensureModal } from '../../ui/templates.js';
 import { getResult } from './result-state.js';
@@ -46,45 +47,20 @@ export async function openSaveResultModal(rid) {
         return;
     }
 
-    // Prepare modal content
-    const conn = getConn();
-    let schemas = ["main"];
-    try {
-        // Fetch schemas but filter out system schemas like information_schema and pg_catalog
-        const schemaRes = await conn.query(`
-            SELECT DISTINCT schema_name 
-            FROM information_schema.schemata 
-            WHERE schema_name NOT IN ('information_schema', 'pg_catalog', 'temp') 
-            ORDER BY schema_name
-        `);
-        schemas = schemaRes.toArray().map(r => r.schema_name);
-
-        // Ensure main is always present and first if possible
-        if (!schemas.includes("main")) schemas.unshift("main");
-    } catch (e) {
-        console.warn("Could not fetch schemas, defaulting to main", e);
-    }
-
-    // Lazy load modal
+    const schemas = await getSchemaList();
     const modalEl = ensureModal('saveResultModal');
 
-    // Attach cleanup listener (only once)
     if (!cleanupListenerAttached) {
         modalEl.addEventListener('hidden.bs.modal', destroySaveModalSelects);
         cleanupListenerAttached = true;
     }
 
-    // Render Modal Body
     const body = $("#saveResultBody");
     body.innerHTML = buildModalHTML();
-
-    // Initialize TreeSelect for schema selection
     initializeSaveModalSelects(schemas);
 
-    // Setup handler
     $("#saveResultConfirmBtn").onclick = () => executeSave(rid, res);
 
-    // Show Modal (focus: false allows TreeSelect to receive keyboard input)
     const modal = new Modal(modalEl, { focus: false });
     modal.show();
 }

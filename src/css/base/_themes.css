@@ -47,8 +47,9 @@ body[data-bs-theme="light"] {
     --color-info: #0969da;
     --color-info-muted: #ddf4ff;
 
-    /* Table Selection */
-    --color-table-selection: #0550ae;
+    /* Text Selection */
+    --color-bg-text-selection: #0969da;
+    --color-text-selection: #ffffff;
 }
 
 /* =============================================================================
@@ -100,6 +101,7 @@ body[data-bs-theme="dark"] {
     --color-info: #58a6ff;
     --color-info-muted: #1c2c41;
 
-    /* Table Selection */
-    --color-table-selection: #388bfd;
+    /* Text Selection */
+    --color-bg-text-selection: #0969da;
+    --color-text-selection: #ffffff;
 }

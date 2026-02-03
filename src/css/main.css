@@ -113,3 +113,6 @@
 
 /* Results */
 @import './features/_results.css';
+
+/* Schema Browser */
+@import './features/_schema-browser.css';

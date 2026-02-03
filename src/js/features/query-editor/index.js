@@ -12,8 +12,7 @@ import { createQueryTab, removeQueryTab, initTabDragDrop } from './tab-manager.j
 import { createEditor, destroyEditor } from './editor-factory.js';
 import { loadHistory, cleanupHistoryTreeSelect } from './history-manager.js';
 import { setupTabHandlers, runQuery, getQuerySelectHandler, saveQueryFromTab } from './tab-controller.js';
-import { fetchDuckDbSchema } from './schema-provider.js';
-import { invalidateSchemaCache } from '../../editor/sql-intellisense.js';
+import { initSchemaBrowser, destroySchemaBrowser } from './schema-browser.js';
 import { cleanupInlineQueryTracking } from '../results/index.js';
 
 // ============================================================================
@@ -55,11 +54,6 @@ on(Events.QUERIES_CHANGED, async () => {
     }
 });
 
-// Event Listener: Invalidates schema cache when the database connection changes
-on(Events.DATABASE_SWITCHED, () => {
-    invalidateSchemaCache();
-});
-
 // ============================================================================
 // PUBLIC API
 // ============================================================================
@@ -84,6 +78,9 @@ export function initQueryEditor() {
 
         // Cleanup inline query tracking map
         cleanupInlineQueryTracking(tabId);
+
+        // Cleanup schema browser
+        destroySchemaBrowser(tabId);
 
         removeQueryTab(
             tabId,
@@ -118,7 +115,7 @@ export function addQueryTab(prefillText = "", title = null) {
     // Register this tab for cross-tab sync of saved queries
     registerTab(id, onQuerySelect);
 
-    createEditor(wrapId, editorId, id, prefillText, fetchDuckDbSchema, {
+    createEditor(wrapId, editorId, id, prefillText, {
         runButtonId: `run-query-${id}`,
         onSave: () => saveQueryFromTab(id)
     }, async (editor, isFallback) => {
@@ -136,6 +133,9 @@ export function addQueryTab(prefillText = "", title = null) {
 
     // Setup toolbar button handlers
     setupTabHandlers(id);
+
+    // Initialize schema browser
+    initSchemaBrowser(id);
 
     return id;
 }

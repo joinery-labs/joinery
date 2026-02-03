@@ -24,7 +24,6 @@ import { setupFullscreenMode } from './fullscreen-mode.js';
 import { renderPage } from './page-renderer.js';
 import { openSaveResultModal } from './save-result.js';
 import { createEditor, destroyEditor, getEditor, getSqlFromEditor } from '../query-editor/editor-factory.js';
-import { fetchDuckDbSchema } from '../query-editor/schema-provider.js';
 import { executeStatements } from '../query-editor/query-executor.js';
 import { setTabLoadingState } from '../query-editor/tab-controller.js';
 
@@ -430,7 +429,6 @@ export function createQuerySqlDisplay(querySQL, resultBlock, options = {}) {
             hostId,
             editorId,
             currentSQL,
-            fetchDuckDbSchema,
             {
                 lineNumbers: 'off',
                 padding: { top: 5, bottom: 5 },

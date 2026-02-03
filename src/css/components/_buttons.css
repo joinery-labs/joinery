@@ -21,6 +21,9 @@
     background-color: var(--color-bg-subtle);
     color: var(--color-fg-default);
     transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .btn-base:hover {

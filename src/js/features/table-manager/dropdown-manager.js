@@ -5,7 +5,6 @@
  * Handles population, event binding, and visibility states.
  */
 
-import { getConn } from '../../core/database.js';
 import { $ } from '../../utils/dom.js';
 import { TreeSelect } from '../../ui/treeselect.js';
 
@@ -79,50 +78,6 @@ export function initSchemaTableTreeSelects(onSchemaChange, onTableChange) {
 // ============================================================================
 // PUBLIC API
 // ============================================================================
-
-/**
- * Fetches all base tables from the database.
- * @returns {Promise<Array<{table_schema: string, table_name: string}>>} List of tables.
- */
-export async function fetchAllTables() {
-    const conn = getConn();
-
-    const allTablesRes = await conn.query(`
-        SELECT table_schema, table_name
-        FROM information_schema.tables
-        WHERE table_type = 'BASE TABLE'
-        ORDER BY table_schema, table_name;
-    `);
-
-    const rawRows = allTablesRes.toArray();
-    const seen = new Set();
-    const allRows = [];
-
-    for (const r of rawRows) {
-        const schema = r.table_schema || "main";
-        const key = `${schema}\u0000${r.table_name}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        allRows.push({ table_schema: schema, table_name: r.table_name });
-    }
-
-    return allRows;
-}
-
-/**
- * Fetches all available schemas from the database.
- * @returns {Promise<string[]>} List of schema names.
- */
-export async function fetchAllSchemas() {
-    const conn = getConn();
-    const result = await conn.query(`
-        SELECT schema_name 
-        FROM information_schema.schemata 
-        WHERE catalog_name = 'memory'
-        ORDER BY schema_name;
-    `);
-    return result.toArray().map(r => r.schema_name);
-}
 
 /**
  * Populates the schema dropdown options.
