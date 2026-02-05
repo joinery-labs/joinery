@@ -17,6 +17,8 @@ import { initCheckpointManager, resetCheckpointState, forceCheckpoint } from './
 
 // Map<string, { db, conn, worker, persistentPath }>
 const dbStates = new Map();
+// Set of database names discovered at init but not yet loaded (lazy loading)
+const pendingDbNames = new Set();
 let activeDbName = null;
 let conn = null; // Current active connection
 
@@ -56,12 +58,12 @@ export function getActiveDbState() {
 }
 
 /**
- * Check if a database exists.
+ * Check if a database exists (loaded or pending).
  * @param {string} name - Database name
  * @returns {boolean}
  */
 export function hasDatabase(name) {
-    return dbStates.has(name);
+    return dbStates.has(name) || pendingDbNames.has(name);
 }
 
 /**
@@ -123,24 +125,36 @@ async function createNewDatabase(name) {
 
 /**
  * Switch active database.
+ * Unloads the previous database to optimize memory.
  * @param {string} name - Database name
  */
 export async function switchDatabase(name) {
+    if (activeDbName === name) return;
+
+    // Lazy load if not already loaded
+    if (!dbStates.has(name) && pendingDbNames.has(name)) {
+        await createNewDatabase(name);
+        pendingDbNames.delete(name);
+    }
+
     const state = dbStates.get(name);
     if (!state) throw new Error(`Database "${name}" does not exist`);
 
-    // Checkpoint current database before switching
-    if (activeDbName && activeDbName !== name && conn) {
-        await forceCheckpoint();
+    // Checkpoint and unload previous database
+    if (activeDbName && activeDbName !== name) {
+        const prevState = dbStates.get(activeDbName);
+        if (prevState) {
+            await forceCheckpoint();
+            await disposeDuckDbInstance(prevState);
+            dbStates.delete(activeDbName);
+            pendingDbNames.add(activeDbName);
+        }
     }
 
     activeDbName = name;
     conn = state.conn;
 
-    // Reset checkpoint state for the new active database
     resetCheckpointState();
-
-    // Notify subscribers
     emit(Events.DATABASE_SWITCHED);
 }
 
@@ -153,13 +167,17 @@ export function refreshDbSelect(selectName) {
     if (!treeSelect) return;
 
     const data = [];
+    // Include both loaded databases and pending (discovered but not yet loaded)
     for (const key of dbStates.keys()) {
+        data.push({ id: key, label: key });
+    }
+    for (const key of pendingDbNames) {
         data.push({ id: key, label: key });
     }
 
     treeSelect.setData(data);
 
-    if (selectName && dbStates.has(selectName)) {
+    if (selectName && (dbStates.has(selectName) || pendingDbNames.has(selectName))) {
         treeSelect.setValue(selectName);
     }
 }
@@ -170,6 +188,15 @@ export function refreshDbSelect(selectName) {
  * @param {string} name - Database name
  */
 export async function deleteDatabase(name) {
+    // Handle pending (not yet loaded) databases
+    if (pendingDbNames.has(name)) {
+        pendingDbNames.delete(name);
+        // Delete the file from persistent storage
+        await deleteDatabaseFile(name);
+        refreshDbSelect(activeDbName);
+        return;
+    }
+
     const state = dbStates.get(name);
     if (!state) throw new Error(`Database "${name}" does not exist`);
 
@@ -225,20 +252,18 @@ export async function initDatabase() {
             persistedDbNames = await listDatabaseFiles();
         }
 
-        // Ensure 'default' is always first
-        if (!persistedDbNames.includes('default')) {
-            persistedDbNames.unshift('default');
-        } else {
-            // Move 'default' to front if it exists elsewhere
-            persistedDbNames = ['default', ...persistedDbNames.filter(n => n !== 'default')];
+        // Separate 'default' from other databases
+        const otherDbNames = persistedDbNames.filter(n => n !== 'default');
+
+        // Store other database names for lazy loading (don't load them yet)
+        pendingDbNames.clear();
+        for (const name of otherDbNames) {
+            pendingDbNames.add(name);
         }
 
-        // Load all databases
-        for (let i = 0; i < persistedDbNames.length; i++) {
-            const name = persistedDbNames[i];
-            op.update({ status: `Loading database ${i + 1}/${persistedDbNames.length}: ${name}...` });
-            await createNewDatabase(name);
-        }
+        // Only load the 'default' database at startup
+        op.update({ status: 'Loading default database...' });
+        await createNewDatabase('default');
 
         // Set default as active
         activeDbName = "default";
@@ -250,10 +275,10 @@ export async function initDatabase() {
 
         refreshDbSelect("default");
 
-        const dbCount = persistedDbNames.length;
+        const totalDbCount = 1 + pendingDbNames.size;
         if (hasPersistence) {
-            const msg = dbCount > 1
-                ? `Loaded ${dbCount} databases (auto-save enabled)`
+            const msg = totalDbCount > 1
+                ? `Found ${totalDbCount} databases (auto-save enabled)`
                 : 'Database ready (auto-save enabled)';
             op.end({ success: true, message: msg, dismissDelay: NOTIFICATION_TIMING.SUCCESS });
         } else {

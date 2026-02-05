@@ -154,7 +154,8 @@ export async function importDatabase(file, sourcePath = null) {
                     `${t.schema_name || 'main'}.${t.table_name}`
                 ));
 
-                // Check against existing database
+                // Check against existing database - switch to it to trigger lazy load if needed
+                await switchDatabase(baseNameFromFile);
                 const existingState = getDatabaseState(baseNameFromFile);
                 const existingTables = await getExistingTables(existingState.conn);
 

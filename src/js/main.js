@@ -16,7 +16,7 @@ import { initGlobalShortcuts } from './core/keyboard-shortcuts.js';
 import { logEnvironment, setupExitConfirmation, openUrl } from './platform/index.js';
 
 import { initTheme } from './ui/theme.js';
-import { notify, NOTIFICATION_TIMING } from './ui/notification-panel.js';
+import { startNotification, NOTIFICATION_TIMING } from './ui/notification-panel.js';
 
 import {
     createAppToolbar,
@@ -74,13 +74,18 @@ function initDatabaseSelector() {
     _dbTreeSelect.on('change', async (value) => {
         if (!value) return;
 
+        const op = startNotification({
+            title: 'Switching Database',
+            status: `Loading "${value}"...`
+        });
+
         try {
             await switchDatabase(value);
 
-            notify("Database", `Switched to "${value}"`, { variant: "success", delay: NOTIFICATION_TIMING.SUCCESS });
+            op.end({ success: true, message: `Switched to "${value}"`, dismissDelay: NOTIFICATION_TIMING.SUCCESS });
         } catch (err) {
             console.error("Database switch error:", err);
-            notify("Error", "Failed to switch database: " + err.message, { variant: "danger", delay: NOTIFICATION_TIMING.ERROR });
+            op.end({ success: false, message: 'Switch failed', dismissDelay: NOTIFICATION_TIMING.ERROR, details: [err.message] });
         }
     });
 }

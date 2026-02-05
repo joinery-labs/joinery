@@ -84,11 +84,11 @@ body[data-bs-theme="dark"] {
     --shadow-lg: 0 8px 24px #010409;
 
     /* Focus Ring */
-    --color-focus-ring: #58a6ff;
+    --color-focus-ring: #0969da;
 
     /* Accent Colors */
-    --color-accent: #58a6ff;
-    --color-accent-hover: #79b8ff;
+    --color-accent: #0969da;
+    --color-accent-hover: #0860ca;
     --color-accent-muted: #1c2c41;
 
     /* Semantic Colors */
@@ -98,7 +98,7 @@ body[data-bs-theme="dark"] {
     --color-warning-muted: #2a2517;
     --color-danger: #f85149;
     --color-danger-muted: #2d1b1b;
-    --color-info: #58a6ff;
+    --color-info: #0969da;
     --color-info-muted: #1c2c41;
 
     /* Text Selection */
