@@ -21,7 +21,7 @@ Privacy-first local data analytics powered by DuckDB. Run SQL queries on your fi
 
 ## 🎯 Why Joinery?
 
-**SQL excels at data transformations with transparent, modifiable code.** For tasks like pivoting, unpivoting, complex filtering, and sophisticated aggregations, SQL, especially DuckDB, provides built-in functions that are faster to write, easier to modify, and more reproducible than clicking through menus. When you ask AI for help with a spreadsheet task, you get step-by-step instructions to click through dialogs. When you ask for a SQL query, you get code you can instantly modify and rerun.
+**SQL excels at data transformations with transparent, modifiable code.** For tasks like pivoting, unpivoting, complex filtering, and sophisticated aggregations, SQL, especially DuckDB, provides built-in functions that are faster to write, easier to modify, and more reproducible than clicking through menus.
 
 **Modern AI has made SQL accessible to everyone.** Copy your database schema from Joinery, describe what you need in plain English to LLMs like Gemini, Claude, or ChatGPT, and get working queries back. SQL's readable syntax makes validation straightforward. You can see exactly what's happening to your data. LLMs can understand what data they're dealing with from the schema and sample data, making the process smoother.
 
